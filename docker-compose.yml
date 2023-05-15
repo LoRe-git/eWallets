@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  db:
+    image: "postgres:9.6-alpine"
+    container_name: db
+    restart: always
+
+    ports:
+      - 5432:5432
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_DB=ewallet_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+
+
+  ewallet:
+    build: ./
+    container_name: ewallet
+    environment:
+      - DB_SERVER:db
+      - POSTGRES_DB=ewallet_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+    ports:
+      - 8080:8080 # Forward the exposed port 8080 on the container to port 8080 on the host machine
+
+    depends_on:
+      - db
+
+
+
+volumes:
+  postgres_data:
